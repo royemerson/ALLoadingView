@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2015 Artem Loginov
 
     Permission is hereby granted,  free of charge,  to any person obtaining a
@@ -131,7 +131,7 @@ class ALLoadingView: NSObject {
         loadingViewType = type
         
         let operationInit = NSBlockOperation { () -> Void in
-            self.performSelectorOnMainThread("initializeLoadingView", withObject: nil, waitUntilDone: true)
+            self.performSelectorOnMainThread(#selector(ALLoadingView.initializeLoadingView), withObject: nil, waitUntilDone: true)
         }
         
         let operationShow = NSBlockOperation { () -> Void in
@@ -223,7 +223,7 @@ class ALLoadingView: NSObject {
         }
         assert(loadingViewType == .Progress, "ALLoadingView Update Error. Set Progress type to access progress bar.")
         
-        performSelectorOnMainThread("progress_updateProgressControlsWithData:", withObject: ["message": message, "progress" : progress], waitUntilDone: true)
+        performSelectorOnMainThread(#selector(ALLoadingView.progress_updateProgressControlsWithData(_:)), withObject: ["message": message, "progress" : progress], waitUntilDone: true)
     }
     
     func progress_updateProgressControlsWithData(data: NSDictionary) {
@@ -231,10 +231,10 @@ class ALLoadingView: NSObject {
         let progress = data["progress"] as? Float ?? 0.0
         
         for view in self.loadingViewSubviews() {
-            if view.respondsToSelector("setText:") {
+            if view.respondsToSelector(Selector("setText:")) {
                 (view as! UILabel).text = message
             }
-            if view.respondsToSelector("setProgress:") {
+            if view.respondsToSelector(Selector("setProgress:")) {
                 (view as! UIProgressView).progress = progress
             }
         }
@@ -245,7 +245,7 @@ class ALLoadingView: NSObject {
                loadingViewType == .MessageWithIndicator ||
                loadingViewType == .MessageWithIndicatorAndCancelButton, "ALLoadingView Update Error. Set .Message, .MessageWithIndicator and .MessageWithIndicatorAndCancelButton type to access message label.")
         
-        performSelectorOnMainThread("progress_updateProgressControlsWithData:", withObject: ["message": message], waitUntilDone: true)
+        performSelectorOnMainThread(#selector(ALLoadingView.progress_updateProgressControlsWithData(_:)), withObject: ["message": message], waitUntilDone: true)
     }
     
     private func updateSubviewsTitles() {
@@ -254,29 +254,29 @@ class ALLoadingView: NSObject {
         switch self.loadingViewType {
         case .Message, .MessageWithIndicator:
             for view in subviews {
-                if view.respondsToSelector("setText:") {
+                if view.respondsToSelector(Selector("setText:")) {
                     (view as! UILabel).text = self.messageText
                 }
             }
             break
         case .MessageWithIndicatorAndCancelButton:
             for view in subviews {
-                if view.respondsToSelector("setTitle:") {
+                if view.respondsToSelector(Selector("setTitle:")) {
                     (view as! UIButton).setTitle("Cancel", forState: .Normal)
-                    (view as! UIButton).addTarget(self, action: "cancelButtonTapped:", forControlEvents: .TouchUpInside)
+                    (view as! UIButton).addTarget(self, action: #selector(ALLoadingView.cancelButtonTapped(_:)), forControlEvents: .TouchUpInside)
                 }
-                if view.respondsToSelector("setText:") {
+                if view.respondsToSelector(Selector("setText:")) {
                     (view as! UILabel).text = self.messageText
                 }
             }
             break
         case .Progress:
             for view in subviews {
-                if view.respondsToSelector("setProgress:") {
+                if view.respondsToSelector(Selector("setProgress:")) {
                     (view as! UIProgressView).progress = 0.0
                     
                 }
-                if view.respondsToSelector("setText:") {
+                if view.respondsToSelector(Selector("setText:")) {
                     (view as! UILabel).text = self.messageText
                 }
             }
@@ -370,7 +370,6 @@ class ALLoadingView: NSObject {
                 asVisualEffectView.contentView.alpha = alpha
             }
         } else {
-            print("Setting loading view alpha value to \(alpha)")
             loadingView.alpha = alpha
         }
     }

@@ -55,14 +55,14 @@ class ViewController: UIViewController {
             (finished) -> Void in
             ALLoadingView.manager.updateProgressLoadingViewWithMessage("Initializing", forProgress: 0.05)
             self.step = 1
-            self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateProgress", userInfo: nil, repeats: true)
+            self.updateTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(ViewController.updateProgress), userInfo: nil, repeats: true)
         }
     }
     
     func updateProgress() {
         let steps = ["Initializing", "Downloading data", "Extracting files", "Parsing data", "Updating database", "Saving"]
         ALLoadingView.manager.updateProgressLoadingViewWithMessage(steps[step], forProgress: 0.2 * Float(step))
-        step++
+        step += 1
         if step == steps.count {
             ALLoadingView.manager.hideLoadingView()
             updateTimer.invalidate()
